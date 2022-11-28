@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- might look like that we are using Spring, but we are not. The XML DSL is derived from there, though -->
+<routes xmlns="http://camel.apache.org/schema/spring">
+  <route id="sendSoapMessage">
+    <from uri="direct:numberToWords"/>
+    <!-- Converting our body to the type expected by the SOAP interface -->
+    <bean beanType="java.math.BigInteger" method="valueOf"/>
+    <setHeader name="operationName">
+      <constant>NumberToWords</constant>
+    </setHeader>
+    <toD uri="cxf://{{com.dataaccess.webservicesserver.url}}?serviceClass=com.dataaccess.webservicesserver.NumberConversionSoapType&amp;wsdlURL=/wsdl/numberconversion.wsdl"/>
+  </route>
+</routes>
