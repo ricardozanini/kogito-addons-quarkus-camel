@@ -11,6 +11,7 @@
       "operation": "camel:direct:numberToWords"
     }
   ],
+  "dataInputSchema": "camel.sw.schema.json",
   "states": [
     {
       "name": "start",
@@ -26,7 +27,7 @@
         }
       ],
       "stateDataFilter": {
-        "output": "${ .response }"
+        "output": "${ .words = .response[0] | del(.response) }"
       },
       "end": true
     }
