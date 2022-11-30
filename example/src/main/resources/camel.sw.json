@@ -1,8 +1,7 @@
 {
   "id": "camelCustomFunction",
   "version": "1.0",
-  "name": "Custom RPC example",
-  "description": "This test a custom type can be added as addon in the classpath",
+  "name": "Custom Camel example",
   "start": "start",
   "functions": [
     {

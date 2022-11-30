@@ -11,7 +11,7 @@ import io.serverlessworkflow.api.functions.FunctionRef;
 import static org.kie.kogito.addons.quarkus.camel.runtime.CamelCustomWorkItemHandler.NAME;
 import static org.kie.kogito.addons.quarkus.camel.runtime.CamelCustomWorkItemHandler.OPERATION;
 import static org.kie.kogito.serverless.workflow.parser.FunctionNamespaceFactory.getFunctionName;
-// TODO we might need to remove support of function namespaces
+
 public class CamelCustomFunctionNamespace extends WorkItemFunctionNamespace {
 
     @Override
