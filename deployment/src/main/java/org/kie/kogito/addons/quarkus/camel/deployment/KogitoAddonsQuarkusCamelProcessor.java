@@ -6,7 +6,7 @@ import org.kie.kogito.quarkus.addons.common.deployment.RequireCapabilityKogitoAd
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 
-class KogitoAddonsQuarkusCamelProcessor extends RequireCapabilityKogitoAddOnProcessor {
+public class KogitoAddonsQuarkusCamelProcessor extends RequireCapabilityKogitoAddOnProcessor {
 
     private static final String FEATURE = "kogito-addons-quarkus-camel";
 

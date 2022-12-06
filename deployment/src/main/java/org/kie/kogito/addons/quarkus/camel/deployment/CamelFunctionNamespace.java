@@ -12,11 +12,15 @@ import static org.kie.kogito.addons.quarkus.camel.runtime.CamelCustomWorkItemHan
 import static org.kie.kogito.addons.quarkus.camel.runtime.CamelCustomWorkItemHandler.OPERATION;
 import static org.kie.kogito.serverless.workflow.parser.FunctionNamespaceFactory.getFunctionName;
 
-public class CamelCustomFunctionNamespace extends WorkItemFunctionNamespace {
+/**
+ * Implementation of the custom Camel Namespace Function Reference
+ */
+public class CamelFunctionNamespace extends WorkItemFunctionNamespace {
 
     @Override
     protected <T extends RuleFlowNodeContainerFactory<T, ?>> WorkItemNodeFactory<T> fillWorkItemHandler(Workflow workflow, ParserContext parserContext, WorkItemNodeFactory<T> workItemNodeFactory,
             FunctionRef functionRef) {
+        CamelFunctionStaticValidator.validateFunctionRef(functionRef);
         return workItemNodeFactory.workName(NAME).metaData(OPERATION, getFunctionName(functionRef));
     }
 
