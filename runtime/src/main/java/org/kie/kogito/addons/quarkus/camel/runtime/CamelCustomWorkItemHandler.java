@@ -1,6 +1,5 @@
 package org.kie.kogito.addons.quarkus.camel.runtime;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -11,6 +10,12 @@ import org.kie.kogito.internal.process.runtime.KogitoWorkItem;
 import org.kie.kogito.serverless.workflow.WorkflowWorkItemHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.kie.kogito.addons.quarkus.camel.runtime.CamelFunctionArgs.BODY;
+import static org.kie.kogito.addons.quarkus.camel.runtime.CamelFunctionArgs.HEADERS;
 
 @ApplicationScoped
 public class CamelCustomWorkItemHandler extends WorkflowWorkItemHandler {
@@ -23,21 +28,41 @@ public class CamelCustomWorkItemHandler extends WorkflowWorkItemHandler {
     @Inject
     CamelContext context;
 
+    @Inject
+    ObjectMapper objectMapper;
+
     @Override
     protected Object internalExecute(KogitoWorkItem workItem, Map<String, Object> parameters) {
-        final Iterator<?> iter = parameters.values().iterator();
         final Map<String, Object> metadata = workItem.getNodeInstance().getNode().getMetaData();
         final String camelEndpoint = (String) metadata.get(OPERATION);
 
         checkEndpointExists(camelEndpoint);
 
-        if (iter.hasNext()) {
-            final Object args = iter.next();
-            LOGGER.debug("Invoking Camel Endpoint '{}' with arguments '{}'", camelEndpoint, args);
-            return context.createProducerTemplate().requestBody(camelEndpoint, iter.next());
-        } else {
-            LOGGER.debug("Invoking Camel Endpoint '{}' with no arguments", camelEndpoint);
+        if (parameters.isEmpty()) {
+            LOGGER.debug("Invoking Camel Endpoint '{}' with no body or headers", camelEndpoint);
             return context.createProducerTemplate().requestBody(camelEndpoint);
+        } else {
+            Object body = null;
+            Map<String, Object> headers = null;
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                if (HEADERS.equalsIgnoreCase(entry.getKey())) {
+                    headers = objectMapper.convertValue(entry.getValue(), new TypeReference<>() {
+                    });
+                }
+                if (BODY.equalsIgnoreCase(entry.getKey())) {
+                    body = entry.getValue();
+                }
+            }
+            if (body == null) {
+                body = parameters.values().iterator().next();
+            }
+
+            if (headers == null) {
+                LOGGER.debug("Invoking Camel Endpoint '{}' with body '{}'", camelEndpoint, body);
+                return context.createProducerTemplate().requestBody(camelEndpoint, body);
+            }
+            LOGGER.debug("Invoking Camel Endpoint '{}' with body '{}' and headers '{}'", camelEndpoint, body, headers);
+            return context.createProducerTemplate().requestBodyAndHeaders(camelEndpoint, body, headers);
         }
     }
 

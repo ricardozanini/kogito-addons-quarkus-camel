@@ -2,6 +2,10 @@ package org.kie.kogito.addons.quarkus.camel.deployment;
 
 import java.util.Objects;
 
+import org.kie.kogito.addons.quarkus.camel.runtime.CamelFunctionArgs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.serverlessworkflow.api.Workflow;
@@ -16,6 +20,8 @@ import io.serverlessworkflow.api.states.OperationState;
  * Static validation for Workflow DSL in build time.
  */
 public final class CamelFunctionStaticValidator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CamelFunctionStaticValidator.class);
 
     private CamelFunctionStaticValidator() {
     }
@@ -51,8 +57,18 @@ public final class CamelFunctionStaticValidator {
      */
     public static void validateFunctionRef(final FunctionRef functionRef) {
         final JsonNode jsonNode = functionRef.getArguments();
-        if (jsonNode != null && jsonNode.size() > 1) {
-            throw new IllegalArgumentException("Camel functions only support zero or one parameter. Please review the arguments: \n" + jsonNode.asText());
+        if (jsonNode == null) {
+            return;
+        }
+        if (jsonNode.size() > 2) {
+            throw new IllegalArgumentException("Camel functions only support 'body', 'header', or no arguments. Please review the arguments: \n" + jsonNode.asText());
+        }
+        final JsonNode headers = jsonNode.get(CamelFunctionArgs.HEADERS);
+        if (headers != null && (headers.isArray() || !headers.isObject())) {
+            throw new IllegalArgumentException("Camel functions headers arguments must be either an object or array. Please review the arguments: \n" + headers.asText());
+        }
+        if (jsonNode.get(CamelFunctionArgs.BODY) == null) {
+            LOGGER.warn("No body arguments found in the function reference '{}'. The first parameter will be used as the Camel message body. Please use 'body: { }'.", functionRef.getRefName());
         }
     }
 
