@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- might look like that we are using Spring, but we are not. The XML DSL is derived from there, though -->
 <routes xmlns="http://camel.apache.org/schema/spring">
-  <route id="simpleLogRoute">
-    <from uri="direct:logRoute"/>
+  <route id="logRouteReplaceHeader">
+    <from uri="direct:logRouteReplaceHeader"/>
     <setBody>
       <!-- Transfer the header data to the body -->
-      <simple>{ "id": "${header.WorkflowID}", "pepe": { "name": "juan" } }</simple>
+      <simple>{ "id": "${header.WorkflowID}", "arg1": { "arg2": "value1" } }</simple>
     </setBody>
     <unmarshal>
       <json library="Jackson"/>

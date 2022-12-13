@@ -40,7 +40,7 @@ public class CamelCustomWorkItemHandler extends WorkflowWorkItemHandler {
 
         if (parameters.isEmpty()) {
             LOGGER.debug("Invoking Camel Endpoint '{}' with no body or headers", camelEndpoint);
-            return context.createProducerTemplate().requestBody(camelEndpoint);
+            return context.createProducerTemplate().requestBody(camelEndpoint, "");
         } else {
             Object body = null;
             Map<String, Object> headers = null;

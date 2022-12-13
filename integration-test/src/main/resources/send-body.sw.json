@@ -1,6 +1,6 @@
 {
   "specVersion": "0.8",
-  "id": "send_body_headers",
+  "id": "send_body",
   "version": "1.0.0",
   "start": "sendToLog",
   "functions": [
@@ -19,10 +19,7 @@
           "functionRef": {
             "refName": "logRoute",
             "arguments": {
-              "body": "${ . }",
-              "headers": {
-                "WorkflowID": "$WORKFLOW.instanceId"
-              }
+              "body": "${ . }"
             }
           }
         }
