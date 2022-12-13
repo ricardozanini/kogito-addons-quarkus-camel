@@ -19,6 +19,10 @@
       <artifactId>camel-quarkus-direct</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-yaml-dsl</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-xml-io-dsl</artifactId>
     </dependency>
